@@ -47,22 +47,6 @@ st.markdown("""
             background-color: #007bff;
             color: white;
         }
-        .response-box { 
-            background-color: #ffffff; 
-            padding: 15px; 
-            border-radius: 10px; 
-            border: 1px solid #d3d3d3;
-            min-height: 200px;
-            max-height: 400px;
-            overflow-y: auto;
-            font-size: 16px;
-            white-space: pre-wrap;
-        }
-        .sidebar-title { 
-            font-size:18px; 
-            font-weight: bold; 
-            margin-bottom:10px; 
-        }
     </style>
 """, unsafe_allow_html=True)
 
@@ -70,7 +54,7 @@ st.markdown("""
 st.markdown("<h1>🚀 Whatfix Salesforce Copilot</h1>", unsafe_allow_html=True)
 
 # Sidebar: Select User
-st.sidebar.markdown("<p class='sidebar-title'>👤 Select a Sales User</p>", unsafe_allow_html=True)
+st.sidebar.markdown("👤 **Select a Sales User**")
 users = requests.get(f"{BACKEND_API_URL}/users").json()
 user_options = {user["Name"]: user["Id"] for user in users}
 selected_user = st.sidebar.selectbox("Choose User", list(user_options.keys()))
@@ -121,13 +105,9 @@ with col4:
 
 # **Response Box (Fixed)**
 st.subheader("")
-st.markdown('<div class="response-box">', unsafe_allow_html=True)
-
-# Join previous responses with new ones and display inside the box
 response_text = "\n\n".join(st.session_state.responses)
-st.markdown(f"<p>{response_text}</p>", unsafe_allow_html=True)
 
-st.markdown("</div>", unsafe_allow_html=True)
+st.text_area("Responses", value=response_text, height=250, key="response_box", disabled=True)
 
 # **Chat Interface**
 st.subheader("💬 Chat with Copilot")
