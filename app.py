@@ -51,12 +51,12 @@ st.markdown("""
             background-color: #ffffff; 
             padding: 15px; 
             border-radius: 10px; 
-            margin-top: 10px; 
             border: 1px solid #d3d3d3;
-            min-height: 150px;
+            min-height: 200px;
+            max-height: 400px;
+            overflow-y: auto;
             font-size: 16px;
             white-space: pre-wrap;
-            overflow-y: auto;
         }
         .sidebar-title { 
             font-size:18px; 
@@ -119,11 +119,15 @@ with col4:
         call_summary = response.json().get("summary", "No call summary available.")
         st.session_state.responses.append(call_summary)
 
-# **Response Box**
+# **Response Box (Fixed)**
 st.subheader("")
 st.markdown('<div class="response-box">', unsafe_allow_html=True)
-st.write("\n\n".join(st.session_state.responses))
-st.markdown('</div>', unsafe_allow_html=True)
+
+# Join previous responses with new ones and display inside the box
+response_text = "\n\n".join(st.session_state.responses)
+st.markdown(f"<p>{response_text}</p>", unsafe_allow_html=True)
+
+st.markdown("</div>", unsafe_allow_html=True)
 
 # **Chat Interface**
 st.subheader("💬 Chat with Copilot")
