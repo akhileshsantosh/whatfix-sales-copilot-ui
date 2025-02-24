@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Backend API URL
-BACKEND_API_URL = "https://whatfix-sales-backend.onrender.com"
+BACKEND_API_URL = "https://whatfix-sales-copilot-backend.onrender.com"
 
 # Streamlit UI Styling
 st.set_page_config(page_title="Whatfix Salesforce Copilot", layout="wide")
@@ -22,7 +22,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.image("https://upload.wikimedia.org/wikipedia/commons/2/28/Whatfix_logo.svg", width=200)
-st.markdown("<h1 class='big-font'>🚀 Whatfix Salesforce Copilot</h1>", unsafe_allow_html=True)
+st.markdown("<h1 class='big-font'>Whatfix Salesforce Copilot</h1>", unsafe_allow_html=True)
 
 # Sidebar: Select User
 st.sidebar.markdown("<p class='sidebar-title'>👤 Select a Sales User</p>", unsafe_allow_html=True)
