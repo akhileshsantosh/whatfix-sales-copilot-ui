@@ -27,9 +27,9 @@ st.markdown("""
             margin-top: 20px;
         }
         .prompt-button {
-            width: 220px;
-            height: 150px;
-            padding: 20px;
+            width: 250px;
+            height: 120px;
+            padding: 15px;
             border-radius: 20px; 
             font-size: 18px;
             text-align: center;
@@ -48,11 +48,15 @@ st.markdown("""
             color: white;
         }
         .response-box { 
-            background-color: #eef2f7; 
+            background-color: #ffffff; 
             padding: 15px; 
             border-radius: 10px; 
             margin-top: 10px; 
-            border-left: 5px solid #007bff; 
+            border: 1px solid #d3d3d3;
+            min-height: 150px;
+            font-size: 16px;
+            white-space: pre-wrap;
+            overflow-y: auto;
         }
         .sidebar-title { 
             font-size:18px; 
@@ -77,48 +81,51 @@ st.subheader(f"🤖 Copilot for {selected_user}")
 if "responses" not in st.session_state:
     st.session_state.responses = []
 
-# Prompt Buttons as a Grid
-st.markdown('<div class="prompt-container">', unsafe_allow_html=True)
+# Create a horizontal row for prompt buttons
+col1, col2, col3, col4 = st.columns(4)
 
-if st.button("📂 Get Open Opportunities", key="open_opportunities"):
-    response = requests.get(f"{BACKEND_API_URL}/opportunities/open?user_id={user_options[selected_user]}")
-    data = response.json()
-    
-    if data:
-        response_text = "**Here are the open opportunities:**\n\n"
-        for i, opp in enumerate(data, 1):
-            response_text += f"{i}. **{opp['Name']}**\n   - Amount: {opp.get('Amount', 'N/A')}\n   - Stage: {opp['StageName']}\n   - Close Date: {opp['CloseDate']}\n\n"
-    else:
-        response_text = "No open opportunities found."
+with col1:
+    if st.button("📂 Get Open Opportunities", key="open_opportunities"):
+        response = requests.get(f"{BACKEND_API_URL}/opportunities/open?user_id={user_options[selected_user]}")
+        data = response.json()
+        
+        if data:
+            response_text = "\n".join([
+                f"{i+1}. **{opp['Name']}**\n   - Amount: {opp.get('Amount', 'N/A')}\n   - Stage: {opp['StageName']}\n   - Close Date: {opp['CloseDate']}\n"
+                for i, opp in enumerate(data)
+            ])
+        else:
+            response_text = "No open opportunities found."
 
-    st.session_state.responses.append(response_text)
+        st.session_state.responses.append(response_text)
 
-if st.button("📝 Summarize Opportunity", key="summarize_opportunity"):
-    opportunity_id = st.text_input("Enter Opportunity ID:")
-    if opportunity_id:
-        response = requests.get(f"{BACKEND_API_URL}/opportunities/summarize?opportunity_id={opportunity_id}")
-        summary = response.json().get("summary", "No summary available.")
-        st.session_state.responses.append(f"**Opportunity Summary:**\n\n{summary}")
+with col2:
+    if st.button("📝 Summarize Opportunity", key="summarize_opportunity"):
+        opportunity_id = st.text_input("Enter Opportunity ID:")
+        if opportunity_id:
+            response = requests.get(f"{BACKEND_API_URL}/opportunities/summarize?opportunity_id={opportunity_id}")
+            summary = response.json().get("summary", "No summary available.")
+            st.session_state.responses.append(summary)
 
-if st.button("📒 Get Notes & Attachments", key="get_notes"):
-    response = requests.get(f"{BACKEND_API_URL}/opportunities/details?user_id={user_options[selected_user]}")
-    notes = response.json().get("notes", "No notes available.")
-    st.session_state.responses.append(f"**Notes & Attachments:**\n\n{notes}")
+with col3:
+    if st.button("📒 Get Notes & Attachments", key="get_notes"):
+        response = requests.get(f"{BACKEND_API_URL}/opportunities/details?user_id={user_options[selected_user]}")
+        notes = response.json().get("notes", "No notes available.")
+        st.session_state.responses.append(notes)
 
-if st.button("📞 Summarize Calls", key="summarize_calls"):
-    response = requests.get(f"{BACKEND_API_URL}/opportunities/calls?user_id={user_options[selected_user]}")
-    call_summary = response.json().get("summary", "No call summary available.")
-    st.session_state.responses.append(f"**Call Summary:**\n\n{call_summary}")
+with col4:
+    if st.button("📞 Summarize Calls", key="summarize_calls"):
+        response = requests.get(f"{BACKEND_API_URL}/opportunities/calls?user_id={user_options[selected_user]}")
+        call_summary = response.json().get("summary", "No call summary available.")
+        st.session_state.responses.append(call_summary)
 
+# **Response Box**
+st.subheader("")
+st.markdown('<div class="response-box">', unsafe_allow_html=True)
+st.write("\n\n".join(st.session_state.responses))
 st.markdown('</div>', unsafe_allow_html=True)
 
-# Display previous responses
-if st.session_state.responses:
-    st.subheader("📌 Previous Responses")
-    for response in st.session_state.responses:
-        st.markdown(f"<div class='response-box'>{response}</div>", unsafe_allow_html=True)
-
-# Chat Interface
+# **Chat Interface**
 st.subheader("💬 Chat with Copilot")
 user_query = st.text_input("Ask a question:")
 
